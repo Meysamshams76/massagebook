@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>رزرو ماساژ حرفه‌ای | ارومیه</title>
-<meta name="description" content="رزرو آنلاین ماساژ سوئدی و رلکسی در ارومیه. ساعات کاری ۱۰ صبح تا ۱۰ شب.">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root{--gold:#e2b04a;--gold-dark:#c9982e;--bg:#0f0f1a;--bg2:#1a1a2e;--card:rgba(255,255,255,0.04);--border:rgba(226,176,74,0.2);--text:#ececec;--muted:#9a9aad}
@@ -95,25 +94,9 @@
 <section>
   <h2 class="section-title">خدمات ما</h2>
   <p class="section-sub">هر جلسه، تجربه‌ای متفاوت از آرامش</p>
-  <div class="services">
-    <div class="service-card">
-      <div class="service-icon">🌿</div>
-      <h3>ماساژ سوئدی</h3>
-      <p>ماساژ کلاسیک و عمیق برای رفع تنش عضلانی و بهبود گردش خون</p>
-      <div class="service-price">۱٫۰۰۰٫۰۰۰ <small>تومان / ساعت</small></div>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">🧘</div>
-      <h3>ماساژ رلکسی</h3>
-      <p>ماساژ ملایم و آرامش‌بخش برای کاهش استرس و تجدید انرژی</p>
-      <div class="service-price">۹۰۰٫۰۰۰ <small>تومان / ساعت</small></div>
-    </div>
-    <div class="service-card">
-      <div class="service-icon">⏰</div>
-      <h3>ساعات کاری</h3>
-      <p>همه روزه، حتی تعطیلات</p>
-      <div class="service-price">۱۰ صبح - ۱۰ شب</div>
-    </div>
+  <div class="services" id="servicesContainer">
+    <!-- لیست خدمات اینجا به صورت داینامیک لود میشه -->
+    <div style="text-align:center; width:100%; color:var(--muted)">در حال بارگذاری خدمات...</div>
   </div>
 </section>
 
@@ -145,8 +128,7 @@
     <form id="bookingForm" novalidate>
       <label for="massageType">نوع ماساژ</label>
       <select id="massageType" required>
-        <option value="swedish">ماساژ سوئدی — ۱٬۰۰۰٬۰۰۰ تومان / ساعت</option>
-        <option value="relax">ماساژ رلکسی — ۹۰۰٬۰۰۰ تومان / ساعت</option>
+        <option value="">ابتدا خدمات را انتخاب کنید...</option>
       </select>
 
       <label for="duration">مدت زمان</label>
@@ -192,122 +174,125 @@
 <script>
 (function(){
   'use strict';
-
-  const PRICES = { swedish: 1000000, relax: 900000 };
-
+  let SERVICES = []; // دیتای محصولات اینجا ذخیره میشه
   const $ = id => document.getElementById(id);
-  const timeSelect = $('time');
-  const dateInput = $('date');
-  const phoneInput = $('phone');
-  const form = $('bookingForm');
-  const payBtn = $('payBtn');
-  const statusMsg = $('statusMsg');
-
+  
   for (let h = 10; h <= 22; h++) {
     const o = document.createElement('option');
     const v = String(h).padStart(2, '0') + ':00';
     o.value = v; o.textContent = v;
-    timeSelect.appendChild(o);
+    $('time').appendChild(o);
   }
 
   function toEnDigits(s) {
-    const map = { '۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9',
-                  '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9' };
+    const map = { '۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9','٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9' };
     return String(s || '').split('').map(c => map[c] || c).join('');
   }
+  function normalizePhone(v) { return toEnDigits(v).replace(/\D/g, ''); }
+
+  // ====== دریافت خدمات از دیتابیس ======
+  async function loadServices() {
+    try {
+      const res = await fetch('/api/services');
+      const data = await res.json();
+      SERVICES = data.services || [];
+      
+      const container = $('servicesContainer');
+      const select = $('massageType');
+      
+      if (SERVICES.length === 0) {
+        container.innerHTML = '<div style="text-align:center; width:100%; color:var(--muted)">هیچ خدمتی تعریف نشده است.</div>';
+        return;
+      }
+
+      // 1. رندر کارت ها در صفحه اصلی
+      container.innerHTML = SERVICES.map(s => `
+        <div class="service-card">
+          <div class="service-icon">${s.icon || '💆'}</div>
+          <h3>${s.name}</h3>
+          <p>${s.description || ''}</p>
+          <div class="service-price">${Number(s.price).toLocaleString('fa-IR')} <small>تومان / ساعت</small></div>
+        </div>
+      `).join('');
+
+      // 2. رندر گزینه ها در فرم رزرو
+      select.innerHTML = '<option value="">انتخاب کنید...</option>' + 
+        SERVICES.map(s => `<option value="${s.id}">${s.name} — ${Number(s.price).toLocaleString('fa-IR')} تومان</option>`).join('');
+
+    } catch (e) {
+      console.error('Error loading services:', e);
+    }
+  }
+  loadServices();
 
   function calcPrice() {
-    const t = $('massageType').value;
+    const sId = parseInt($('massageType').value, 10);
     const d = parseInt($('duration').value, 10) || 1;
-    const total = (PRICES[t] || 0) * d;
+    const service = SERVICES.find(s => s.id === sId);
+    const total = service ? service.price * d : 0;
     $('totalPrice').textContent = total.toLocaleString('fa-IR');
-    return { total };
+    return total;
   }
 
   $('massageType').addEventListener('change', calcPrice);
   $('duration').addEventListener('change', calcPrice);
-  calcPrice();
-
-  const today = new Date().toISOString().split('T')[0];
-  dateInput.min = today;
-  dateInput.value = today;
-
-  function normalizePhone(v) {
-    return toEnDigits(v).replace(/\D/g, '');
-  }
   
-  phoneInput.addEventListener('blur', () => {
-    const p = normalizePhone(phoneInput.value);
-    if (p && !/^09\d{9}$/.test(p)) {
-      phoneInput.classList.add('invalid');
-    } else {
-      phoneInput.classList.remove('invalid');
-    }
+  const today = new Date().toISOString().split('T')[0];
+  $('date').min = today;
+  $('date').value = today;
+
+  $('phone').addEventListener('blur', () => {
+    const p = normalizePhone($('phone').value);
+    $('phone').classList.toggle('invalid', p && !/^09\d{9}$/.test(p));
   });
 
-  form.addEventListener('submit', async (e) => {
+  $('bookingForm').addEventListener('submit', async (e) => {
     e.preventDefault();
-    statusMsg.textContent = '';
-    statusMsg.className = 'status-msg';
+    const msg = $('statusMsg');
+    msg.textContent = ''; msg.className = 'status-msg';
 
-    const type = $('massageType').value;
+    const serviceId = parseInt($('massageType').value, 10);
     const duration = parseInt($('duration').value, 10);
-    const date = dateInput.value;
-    const time = timeSelect.value;
+    const date = $('date').value;
+    const time = $('time').value;
     const name = $('name').value.trim();
-    const phone = normalizePhone(phoneInput.value);
+    const phone = normalizePhone($('phone').value);
 
+    if (!serviceId) return showError('لطفاً نوع ماساژ را انتخاب کنید.');
     if (!date) return showError('لطفاً تاریخ را انتخاب کنید.');
     if (!time) return showError('لطفاً ساعت را انتخاب کنید.');
     if (name.length < 3) return showError('نام باید حداقل ۳ حرف باشد.');
-    if (!/^09\d{9}$/.test(phone)) return showError('شماره موبایل نامعتبر است (مثال: ۰۹۱۲۳۴۵۶۷۸۹).');
+    if (!/^09\d{9}$/.test(phone)) return showError('شماره موبایل نامعتبر است.');
 
-    const startHour = parseInt(time.split(':')[0], 10);
-    if (startHour < 10 || startHour + duration > 22) {
-      return showError('این بازه زمانی خارج از ساعات کاری است.');
-    }
-
-    payBtn.disabled = true;
-    payBtn.textContent = 'در حال ثبت...';
+    $('payBtn').disabled = true;
+    $('payBtn').textContent = 'در حال ثبت...';
 
     try {
       const res = await fetch('/api/create-booking', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ type, duration, date, time, name, phone })
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ serviceId, duration, date, time, name, phone })
       });
-
-      const ct = res.headers.get('content-type') || '';
-      if (!ct.includes('application/json')) {
-        throw new Error('پاسخ نامعتبر از سرور');
-      }
-
       const result = await res.json();
-
-      if (!res.ok) {
-        throw new Error(result.message || 'خطا در ثبت رزرو');
-      }
-
-      // نمایش موفقیت
-      statusMsg.innerHTML = '✅ درخواست شما با موفقیت ثبت شد.<br>همکاران ما برای تایید نهایی با شما تماس خواهند گرفت.';
-      statusMsg.className = 'status-msg success';
-      form.reset();
-      dateInput.value = today;
-      calcPrice();
+      if (!res.ok) throw new Error(result.message || 'خطا');
       
+      msg.innerHTML = '✅ درخواست شما با موفقیت ثبت شد.<br>همکاران ما برای تایید نهایی با شما تماس خواهند گرفت.';
+      msg.className = 'status-msg success';
+      $('bookingForm').reset();
+      $('date').value = today;
+      calcPrice();
     } catch (err) {
-      showError(err.message || 'خطای شبکه. لطفاً دوباره تلاش کنید.');
+      showError(err.message);
     } finally {
-      payBtn.disabled = false;
-      payBtn.textContent = '📝 ثبت درخواست رزرو';
+      $('payBtn').disabled = false;
+      $('payBtn').textContent = '📝 ثبت درخواست رزرو';
     }
   });
 
   function showError(msg) {
-    statusMsg.textContent = msg;
-    statusMsg.className = 'status-msg error';
-    payBtn.disabled = false;
-    payBtn.textContent = '📝 ثبت درخواست رزرو';
+    $('statusMsg').textContent = msg;
+    $('statusMsg').className = 'status-msg error';
+    $('payBtn').disabled = false;
+    $('payBtn').textContent = '📝 ثبت درخواست رزرو';
   }
 })();
 </script>
