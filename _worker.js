@@ -14,7 +14,7 @@ export default {
     const origin = request.headers.get('Origin') || '*';
     const cors = {
       'Access-Control-Allow-Origin': origin,
-      'Access-Control-Allow-Methods': 'GET,POST,PATCH,OPTIONS',
+      'Access-Control-Allow-Methods': 'GET,POST,PATCH,DELETE,OPTIONS',
       'Access-Control-Allow-Headers': 'Content-Type,Authorization',
     };
     if (method === 'OPTIONS') return new Response(null, { status: 204, headers: cors });
@@ -50,6 +50,18 @@ export default {
           return json({ message: 'وضعیت نامعتبر' }, 400, cors);
         }
         await env.DB.prepare(`UPDATE bookings SET status=? WHERE id=?`).bind(status, id).run();
+        return json({ ok: true }, 200, cors);
+      }
+
+      // ============ حذف کامل رزرو ============
+      if (path.startsWith('/api/admin/bookings/') && method === 'DELETE') {
+        if (!await verifyToken(request, env.JWT_SECRET)) {
+          return json({ message: 'unauthorized' }, 401, cors);
+        }
+        const id = parseInt(path.split('/').pop(), 10);
+        if (!Number.isInteger(id) || id < 1) return json({ message: 'شناسه نامعتبر' }, 400, cors);
+        
+        await env.DB.prepare(`DELETE FROM bookings WHERE id=?`).bind(id).run();
         return json({ ok: true }, 200, cors);
       }
 
