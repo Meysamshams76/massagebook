@@ -4,37 +4,44 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex, nofollow, noarchive">
-<title>پنل مدیریت - رزروها</title>
+<title>پنل مدیریت</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root{--gold:#e2b04a;--gold-dark:#c9982e;--bg:#0f0f1a;--bg2:#1a1a2e;--card:rgba(255,255,255,0.04);--border:rgba(226,176,74,0.2);--text:#ececec;--muted:#9a9aad;--green:#4caf50;--red:#ff5252}
   *{margin:0;padding:0;box-sizing:border-box;font-family:'Vazirmatn',Tahoma,sans-serif}
   body{background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
   body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 30%,rgba(226,176,74,0.1),transparent 50%);z-index:-1}
+  
   .login-wrap{max-width:420px;margin:12vh auto;background:linear-gradient(160deg,rgba(226,176,74,0.08),rgba(255,255,255,0.02));border:1px solid var(--border);border-radius:24px;padding:40px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
   .login-wrap h1{text-align:center;color:var(--gold);margin-bottom:8px;font-size:1.5rem}
   .login-wrap p{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:28px}
-  input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.35);color:#fff;font-size:1rem;margin-bottom:18px;outline:none;font-family:inherit;transition:.3s}
-  input:focus{border-color:var(--gold)}
+  
+  input, select, textarea{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.35);color:#fff;font-size:1rem;margin-bottom:18px;outline:none;font-family:inherit;transition:.3s}
+  input:focus, select:focus, textarea:focus{border-color:var(--gold)}
+  select option{background:var(--bg2)}
+  textarea{resize:vertical; min-height:80px}
+  
   .btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0f0f1a;font-size:1rem;font-weight:800;cursor:pointer;font-family:inherit;transition:.3s}
   .btn:hover{transform:translateY(-2px)}
   .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
-  .err{color:var(--red);text-align:center;font-size:.85rem;min-height:20px;margin-top:10px;line-height:1.6}
+  .err{color:var(--red);text-align:center;font-size:.85rem;min-height:20px;margin-top:10px}
+  
   #panel{display:none;max-width:1100px;margin:0 auto}
   .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px}
   .topbar h1{font-size:1.5rem;color:var(--gold)}
-  .topbar .actions{display:flex;gap:10px;flex-wrap:wrap}
-  .topbar button{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-family:inherit;font-size:.9rem;transition:.3s}
-  .topbar button:hover{border-color:var(--gold);color:var(--gold)}
-  .topbar .logout:hover{border-color:var(--red);color:var(--red)}
+  
+  .nav-tabs{display:flex; gap:10px; margin-bottom:28px; border-bottom:1px solid var(--border); padding-bottom:10px;}
+  .nav-tabs button{padding:10px 20px; background:transparent; border:none; color:var(--muted); font-size:1rem; cursor:pointer; font-family:inherit; border-radius:8px; transition:.3s;}
+  .nav-tabs button.active{background:var(--card); color:var(--gold); font-weight:700; border:1px solid var(--border);}
+  .nav-tabs .logout{color:var(--red); margin-right:auto;}
+  
+  /* --- رزروها --- */
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:28px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center}
   .stat .num{font-size:1.8rem;font-weight:900;color:var(--gold)}
   .stat .lbl{color:var(--muted);font-size:.8rem;margin-top:4px}
   .filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-  .filters input,.filters select{width:auto;margin:0;padding:10px 14px;font-size:.9rem;flex:1;min-width:140px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:10px;font-family:inherit;outline:none}
-  .filters input:focus,.filters select:focus{border-color:var(--gold)}
-  .filters select option{background:var(--bg2)}
+  .filters input,.filters select{width:auto;margin:0;padding:10px 14px;font-size:.9rem;flex:1;min-width:140px;}
   .booking-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:14px;transition:.3s}
   .booking-card:hover{border-color:var(--gold)}
   .bc-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px}
@@ -53,9 +60,23 @@
   .bc-actions .no:hover{border-color:var(--red);color:var(--red)}
   .bc-actions .del { border-color: var(--red); color: var(--red); margin-right: auto; }
   .bc-actions .del:hover { background: rgba(255,82,82,0.1); }
+  
+  /* --- خدمات --- */
+  #servicesSection { display: none; }
+  .service-item{display:flex;justify-content:space-between;align-items:center;background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;margin-bottom:14px; gap: 15px; flex-wrap:wrap;}
+  .service-item-info { flex: 1; }
+  .service-item-name { font-size:1.1rem; color:var(--gold); font-weight:700; display:flex; align-items:center; gap:8px; }
+  .service-item-price { color:var(--muted); font-size:0.9rem; margin-top:4px; }
+  .service-item-actions button{padding:8px 16px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:.85rem;font-family:inherit;transition:.2s; margin-left: 5px;}
+  .service-item-actions .edit:hover{border-color:var(--gold); color:var(--gold);}
+  .service-item-actions .del:hover{border-color:var(--red); color:var(--red);}
+  
+  .form-box { background:var(--card); border:1px solid var(--border); border-radius:24px; padding:30px; margin-bottom:30px;}
+  .form-box h3 { margin-bottom:20px; color:var(--gold); font-size:1.2rem; }
+  .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+
   .empty{text-align:center;color:var(--muted);padding:60px 20px}
-  .loading{text-align:center;color:var(--muted);padding:40px}
-  @media(max-width:600px){.login-wrap{margin-top:6vh;padding:28px 22px}.bc-grid{grid-template-columns:1fr 1fr}}
+  @media(max-width:600px){.login-wrap{margin-top:6vh;padding:28px 22px}.bc-grid{grid-template-columns:1fr 1fr}.row2{grid-template-columns:1fr}}
 </style>
 </head>
 <body>
@@ -70,91 +91,137 @@
 
 <div id="panel">
   <div class="topbar">
-    <h1>📋 مدیریت رزروها</h1>
-    <div class="actions">
-      <button id="refreshBtn">🔄 بروزرسانی</button>
-      <button class="logout" id="logoutBtn">خروج</button>
+    <h1>⚙️ پنل مدیریت سالن</h1>
+  </div>
+  
+  <div class="nav-tabs">
+    <button id="tabBookings" class="active" onclick="switchTab('bookings')">📋 رزروها</button>
+    <button id="tabServices" onclick="switchTab('services')">💆‍♂️ مدیریت خدمات</button>
+    <button class="logout" onclick="logout()">خروج</button>
+  </div>
+
+  <!-- ========= بخش رزروها ========= -->
+  <div id="bookingsSection">
+    <div class="stats" id="stats"></div>
+    <div class="filters">
+      <select id="filterStatus" onchange="renderBookings()">
+        <option value="all">همه وضعیت‌ها</option>
+        <option value="pending">در انتظار</option>
+        <option value="confirmed">تایید‌شده</option>
+        <option value="cancelled">لغو‌شده</option>
+      </select>
+      <input type="text" id="searchBox" placeholder="🔍 جستجو نام یا شماره..." oninput="renderBookings()">
+      <button class="btn" style="width:auto; padding:10px 20px;" onclick="loadBookings()">🔄 بروزرسانی</button>
     </div>
+    <div id="bookingsList"></div>
   </div>
-  <div class="stats" id="stats"></div>
-  <div class="filters">
-    <select id="filterStatus">
-      <option value="all">همه وضعیت‌ها</option>
-      <option value="pending">در انتظار تایید</option>
-      <option value="confirmed">تایید‌شده</option>
-      <option value="cancelled">لغو‌شده</option>
-    </select>
-    <input type="text" id="searchBox" placeholder="🔍 جستجو نام یا شماره...">
+
+  <!-- ========= بخش خدمات ========= -->
+  <div id="servicesSection">
+    <!-- فرم افزودن / ویرایش -->
+    <div class="form-box">
+      <h3 id="serviceFormTitle">➕ افزودن خدمت جدید</h3>
+      <input type="hidden" id="serviceId">
+      <div class="row2">
+        <div>
+          <label>نام خدمت</label>
+          <input type="text" id="serviceName" placeholder="مثلاً ماساژ سنگ داغ">
+        </div>
+        <div>
+          <label>قیمت هر ساعت (تومان)</label>
+          <input type="number" id="servicePrice" placeholder="مثلاً 1200000">
+        </div>
+      </div>
+      <div class="row2">
+        <div>
+          <label>آیکون (ایموجی)</label>
+          <input type="text" id="serviceIcon" placeholder="💆" value="💆">
+        </div>
+        <div>
+          <label>توضیحات کوتاه</label>
+          <input type="text" id="serviceDesc" placeholder="توضیح یک خطی...">
+        </div>
+      </div>
+      <button class="btn" id="saveServiceBtn" onclick="saveService()">ذخیره خدمت</button>
+      <button class="btn" id="cancelEditBtn" style="background:transparent; border:1px solid var(--border); color:var(--text); display:none; margin-top:10px;" onclick="resetServiceForm()">انصراف از ویرایش</button>
+    </div>
+
+    <!-- لیست خدمات -->
+    <div id="servicesList"></div>
   </div>
-  <div id="bookingsList"></div>
+
 </div>
 
 <script>
 (function(){
   'use strict';
-
   let AUTH_TOKEN = sessionStorage.getItem('adminToken') || '';
   let allBookings = [];
+  let allServices = [];
+  
   const $ = id => document.getElementById(id);
 
-  $('password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
-  $('loginBtn').addEventListener('click', doLogin);
+  window.logout = function() { sessionStorage.removeItem('adminToken'); AUTH_TOKEN = ''; location.reload(); };
 
-  async function doLogin() {
+  // ====== ورود ======
+  $('loginBtn').addEventListener('click', async () => {
     const pass = $('password').value;
-    const errEl = $('loginErr');
-    const btn = $('loginBtn');
-    errEl.textContent = '';
-    if (!pass) { errEl.textContent = 'رمز عبور را وارد کنید'; return; }
-    btn.disabled = true; btn.textContent = 'در حال بررسی...';
-
+    if (!pass) return $('loginErr').textContent = 'رمز را وارد کنید';
+    $('loginBtn').disabled = true; $('loginBtn').textContent = 'در حال بررسی...';
     try {
       const res = await fetch('/api/admin/login', {
-        method: 'POST', headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ password: pass })
+        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ password: pass })
       });
-      const ct = res.headers.get('content-type') || '';
-      if (!ct.includes('application/json')) throw new Error('پاسخ نامعتبر از سرور');
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'رمز عبور اشتباه است');
+      if (!res.ok) throw new Error(data.message);
       AUTH_TOKEN = data.token;
       sessionStorage.setItem('adminToken', AUTH_TOKEN);
-      $('password').value = '';
       showPanel();
     } catch (e) {
-      errEl.textContent = e.message;
+      $('loginErr').textContent = e.message;
     } finally {
-      btn.disabled = false; btn.textContent = 'ورود';
+      $('loginBtn').disabled = false; $('loginBtn').textContent = 'ورود';
     }
-  }
-
-  $('logoutBtn').addEventListener('click', logout);
-  function logout() { sessionStorage.removeItem('adminToken'); AUTH_TOKEN = ''; location.reload(); }
+  });
+  $('password').addEventListener('keydown', e => { if (e.key === 'Enter') $('loginBtn').click(); });
 
   function showPanel() {
     $('loginWrap').style.display = 'none';
     $('panel').style.display = 'block';
-    loadBookings();
+    switchTab('bookings');
   }
   if (AUTH_TOKEN) showPanel();
 
-  $('refreshBtn').addEventListener('click', loadBookings);
-  $('filterStatus').addEventListener('change', renderBookings);
-  $('searchBox').addEventListener('input', renderBookings);
+  // ====== تب ها ======
+  window.switchTab = function(tab) {
+    if (tab === 'bookings') {
+      $('tabBookings').classList.add('active');
+      $('tabServices').classList.remove('active');
+      $('bookingsSection').style.display = 'block';
+      $('servicesSection').style.display = 'none';
+      loadBookings();
+    } else {
+      $('tabServices').classList.add('active');
+      $('tabBookings').classList.remove('active');
+      $('bookingsSection').style.display = 'none';
+      $('servicesSection').style.display = 'block';
+      loadServicesAdmin();
+    }
+  };
 
+  // =================================================================
+  // ====== بخش رزروها ======
+  // =================================================================
   async function loadBookings() {
     $('bookingsList').innerHTML = '<div class="loading">در حال بارگذاری...</div>';
     try {
       const res = await fetch('/api/admin/bookings', { headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN } });
       if (res.status === 401) { logout(); return; }
-      const ct = res.headers.get('content-type') || '';
-      if (!ct.includes('application/json')) throw new Error('پاسخ نامعتبر از سرور');
       const data = await res.json();
-      if (!res.ok) throw new Error(data.message || 'خطا در دریافت اطلاعات');
-      allBookings = Array.isArray(data.bookings) ? data.bookings : [];
+      allBookings = data.bookings || [];
       renderStats(); renderBookings();
     } catch (e) {
-      $('bookingsList').innerHTML = `<div class="empty">⚠️ ${escapeHtml(e.message)}</div>`;
+      $('bookingsList').innerHTML = `<div class="empty">⚠️ ${e.message}</div>`;
     }
   }
 
@@ -169,102 +236,137 @@
     `;
   }
 
-  function renderBookings() {
+  window.renderBookings = function() {
     const status = $('filterStatus').value;
     const search = $('searchBox').value.trim().toLowerCase();
-
     let list = allBookings;
     if (status !== 'all') list = list.filter(b => b.status === status);
-    if (search) {
-      list = list.filter(b =>
-        String(b.name || '').toLowerCase().includes(search) || String(b.phone || '').includes(search)
-      );
-    }
+    if (search) list = list.filter(b => String(b.name || '').toLowerCase().includes(search) || String(b.phone || '').includes(search));
 
     const el = $('bookingsList');
     if (!list.length) { el.innerHTML = '<div class="empty">📭 رزروی یافت نشد</div>'; return; }
 
-    const typeLabels = { swedish: 'سوئدی', relax: 'رلکسی' };
     const statusLabels = { pending: 'در انتظار', confirmed: 'تایید‌شده', cancelled: 'لغو‌شده' };
 
     el.innerHTML = list.map(b => `
       <div class="booking-card">
         <div class="bc-head">
-          <div>
-            <div class="bc-name">${escapeHtml(b.name || '-')}</div>
-            <div class="bc-phone">${escapeHtml(b.phone || '-')}</div>
-          </div>
-          <span class="badge ${escapeHtml(b.status || 'pending')}">${statusLabels[b.status] || escapeHtml(b.status || '')}</span>
+          <div><div class="bc-name">${b.name || '-'}</div><div class="bc-phone">${b.phone || '-'}</div></div>
+          <span class="badge ${b.status}">${statusLabels[b.status] || b.status}</span>
         </div>
         <div class="bc-grid">
-          <div>نوع ماساژ<strong>${typeLabels[b.massage_type] || escapeHtml(b.massage_type || '-')}</strong></div>
-          <div>مدت<strong>${Number(b.duration) || 0} ساعت</strong></div>
-          <div>تاریخ<strong>${escapeHtml(b.booking_date || '-')}</strong></div>
-          <div>ساعت<strong>${escapeHtml(b.booking_time || '-')}</strong></div>
-          <div>مبلغ کل<strong>${Number(b.total_amount || 0).toLocaleString('fa-IR')} ت</strong></div>
-          <div>تاریخ ثبت<strong>${formatDate(b.created_at)}</strong></div>
+          <div>نوع ماساژ<strong>${b.massage_type || '-'}</strong></div>
+          <div>مدت<strong>${b.duration} ساعت</strong></div>
+          <div>تاریخ<strong>${b.booking_date}</strong></div>
+          <div>ساعت<strong>${b.booking_time}</strong></div>
+          <div>مبلغ کل<strong>${Number(b.total_amount).toLocaleString('fa-IR')} ت</strong></div>
         </div>
-        
         <div class="bc-actions">
           ${b.status === 'pending' ? `
-            <button class="ok" data-id="${b.id}" data-status="confirmed">✅ تایید نهایی (تماس گرفتم)</button>
-            <button class="no" data-id="${b.id}" data-status="cancelled">❌ لغو</button>
+            <button class="ok" onclick="setStatus(${b.id}, 'confirmed')">✅ تایید نهایی</button>
+            <button class="no" onclick="setStatus(${b.id}, 'cancelled')">❌ لغو</button>
           ` : ''}
-          <button class="del" data-del-id="${b.id}">🗑️ حذف کامل</button>
+          <button class="del" onclick="deleteBooking(${b.id})">🗑️ حذف کامل</button>
         </div>
-        
       </div>
     `).join('');
+  };
 
-    // دکمه های تایید و لغو
-    el.querySelectorAll('button[data-id]').forEach(btn => {
-      btn.addEventListener('click', () => { setStatus(parseInt(btn.dataset.id, 10), btn.dataset.status); });
-    });
-    
-    // دکمه حذف کامل
-    el.querySelectorAll('button[data-del-id]').forEach(btn => {
-      btn.addEventListener('click', () => { deleteBooking(parseInt(btn.dataset.delId, 10)); });
-    });
-  }
-
-  async function setStatus(id, status) {
+  window.setStatus = async function(id, status) {
     if (!confirm('مطمئنید؟')) return;
-    try {
-      const res = await fetch(`/api/admin/bookings/${id}`, {
-        method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AUTH_TOKEN },
-        body: JSON.stringify({ status })
-      });
-      if (res.status === 401) { logout(); return; }
-      if (!res.ok) throw new Error('خطا در به‌روزرسانی');
-      loadBookings();
-    } catch (e) { alert(e.message); }
-  }
+    await fetch(`/api/admin/bookings/${id}`, { method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AUTH_TOKEN }, body: JSON.stringify({ status }) });
+    loadBookings();
+  };
   
-  async function deleteBooking(id) {
-    if (!confirm('آیا از حذف کامل این رزرو مطمئن هستید؟ این عمل غیرقابل بازگشت است.')) return;
+  window.deleteBooking = async function(id) {
+    if (!confirm('حذف کامل این رزرو؟ (غیرقابل بازگشت)')) return;
+    await fetch(`/api/admin/bookings/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN } });
+    loadBookings();
+  };
+
+  // =================================================================
+  // ====== بخش مدیریت خدمات ======
+  // =================================================================
+  async function loadServicesAdmin() {
+    $('servicesList').innerHTML = '<div class="loading">در حال بارگذاری...</div>';
     try {
-      const res = await fetch(`/api/admin/bookings/${id}`, {
-        method: 'DELETE', headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
-      });
-      if (res.status === 401) { logout(); return; }
-      if (!res.ok) throw new Error('خطا در حذف رزرو');
-      loadBookings();
-    } catch (e) { alert(e.message); }
+      const res = await fetch('/api/admin/services', { headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN } });
+      const data = await res.json();
+      allServices = data.services || [];
+      renderServicesAdmin();
+    } catch (e) {
+      $('servicesList').innerHTML = `<div class="empty">⚠️ ${e.message}</div>`;
+    }
   }
 
-  function escapeHtml(s) {
-    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  function renderServicesAdmin() {
+    const el = $('servicesList');
+    if (!allServices.length) { el.innerHTML = '<div class="empty">هیچ خدمتی یافت نشد.</div>'; return; }
+    
+    el.innerHTML = allServices.map(s => `
+      <div class="service-item">
+        <div class="service-item-info">
+          <div class="service-item-name">${s.icon} ${s.name}</div>
+          <div class="service-item-price">${Number(s.price).toLocaleString('fa-IR')} تومان / ساعت — ${s.description || ''}</div>
+        </div>
+        <div class="service-item-actions">
+          <button class="edit" onclick="editService(${s.id})">✏️ ویرایش</button>
+          <button class="del" onclick="deleteService(${s.id})">🗑️ حذف</button>
+        </div>
+      </div>
+    `).join('');
   }
-  function formatDate(s) {
-    if (!s) return '-';
+
+  window.saveService = async function() {
+    const id = $('serviceId').value;
+    const data = {
+      name: $('serviceName').value.trim(),
+      price: parseInt($('servicePrice').value, 10),
+      icon: $('serviceIcon').value.trim() || '💆',
+      description: $('serviceDesc').value.trim(),
+      is_active: 1
+    };
+    if (!data.name || !data.price) return alert('نام و قیمت الزامی است.');
+
+    const method = id ? 'PUT' : 'POST';
+    const url = id ? `/api/admin/services/${id}` : '/api/admin/services';
+
     try {
-      const str = String(s);
-      const iso = str.includes('T') ? str : str.replace(' ', 'T') + 'Z';
-      const d = new Date(iso);
-      if (isNaN(d.getTime())) return escapeHtml(str);
-      return d.toLocaleString('fa-IR', { dateStyle: 'short', timeStyle: 'short' });
-    } catch { return escapeHtml(String(s)); }
-  }
+      await fetch(url, { method, headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AUTH_TOKEN }, body: JSON.stringify(data) });
+      resetServiceForm();
+      loadServicesAdmin();
+    } catch (e) { alert('خطا در ذخیره'); }
+  };
+
+  window.editService = function(id) {
+    const s = allServices.find(x => x.id === id);
+    if (!s) return;
+    $('serviceId').value = s.id;
+    $('serviceName').value = s.name;
+    $('servicePrice').value = s.price;
+    $('serviceIcon').value = s.icon;
+    $('serviceDesc').value = s.description;
+    $('serviceFormTitle').textContent = '✏️ ویرایش خدمت';
+    $('cancelEditBtn').style.display = 'block';
+    window.scrollTo(0, 0);
+  };
+
+  window.deleteService = async function(id) {
+    if (!confirm('حذف این خدمت؟ (این کار روی رزروهای قبلی تاثیری ندارد)')) return;
+    await fetch(`/api/admin/services/${id}`, { method: 'DELETE', headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN } });
+    loadServicesAdmin();
+  };
+
+  window.resetServiceForm = function() {
+    $('serviceId').value = '';
+    $('serviceName').value = '';
+    $('servicePrice').value = '';
+    $('serviceIcon').value = '💆';
+    $('serviceDesc').value = '';
+    $('serviceFormTitle').textContent = '➕ افزودن خدمت جدید';
+    $('cancelEditBtn').style.display = 'none';
+  };
+
 })();
 </script>
 </body>
