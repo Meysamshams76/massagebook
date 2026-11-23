@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>رزرو ماساژ حرفه‌ای | ارومیه</title>
-<meta name="description" content="رزرو آنلاین ماساژ سوئدی و رلکسی در ارومیه. پرداخت امن بیعانه، ساعات کاری ۱۰ صبح تا ۱۰ شب.">
+<meta name="description" content="رزرو آنلاین ماساژ سوئدی و رلکسی در ارومیه. ساعات کاری ۱۰ صبح تا ۱۰ شب.">
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
   :root{--gold:#e2b04a;--gold-dark:#c9982e;--bg:#0f0f1a;--bg2:#1a1a2e;--card:rgba(255,255,255,0.04);--border:rgba(226,176,74,0.2);--text:#ececec;--muted:#9a9aad}
@@ -60,7 +60,6 @@
   .row2{display:grid;grid-template-columns:1fr 1fr;gap:14px}
   .price-box{background:rgba(0,0,0,0.4);border:1px dashed var(--border);border-radius:16px;padding:20px;margin-bottom:22px;text-align:center}
   .price-box .total{font-size:1.6rem;color:var(--gold);font-weight:900}
-  .price-box .deposit{color:#ff9800;font-size:.95rem;margin-top:6px}
   .btn-submit{width:100%;padding:16px;border:none;border-radius:14px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0f0f1a;font-size:1.1rem;font-weight:800;cursor:pointer;transition:.3s;font-family:inherit}
   .btn-submit:hover{transform:translateY(-2px);box-shadow:0 10px 30px rgba(226,176,74,0.4)}
   .btn-submit:disabled{opacity:.6;cursor:not-allowed;transform:none}
@@ -69,16 +68,11 @@
   .status-msg.success{color:#4caf50}
   footer{text-align:center;padding:40px 20px;border-top:1px solid var(--border);color:var(--muted);font-size:.9rem}
   footer .addr{color:var(--gold);margin:8px 0}
-  #paymentBanner{display:none;position:fixed;top:20px;left:50%;transform:translateX(-50%);z-index:200;padding:16px 28px;border-radius:14px;font-weight:700;box-shadow:0 10px 40px rgba(0,0,0,0.5);max-width:90vw;text-align:center}
-  #paymentBanner.success{background:linear-gradient(135deg,#4caf50,#2e7d32);color:#fff}
-  #paymentBanner.error{background:linear-gradient(135deg,#ff5252,#c62828);color:#fff}
   @media(max-width:860px){.hero{grid-template-columns:1fr;text-align:center;padding-top:50px}.hero h1{font-size:2rem}.hero-visual{display:none}.section-title{font-size:1.6rem}.booking-wrap{padding:26px 20px}.row2{grid-template-columns:1fr}}
   @media(max-width:480px){.hero h1{font-size:1.6rem}.nav{font-size:.85rem}.logo{font-size:1.05rem}}
 </style>
 </head>
 <body>
-
-<div id="paymentBanner"></div>
 
 <header>
   <div class="nav">
@@ -90,7 +84,7 @@
 <section class="hero">
   <div>
     <h1>آرامشی که <span>لایقش هستید</span></h1>
-    <p>ماساژ حرفه‌ای توسط متخصص مجرب، در محیطی آرام و بهداشتی. رزرو آنلاین آسان، پرداخت امن.</p>
+    <p>ماساژ حرفه‌ای توسط متخصص مجرب، در محیطی آرام و بهداشتی. رزرو آنلاین آسان.</p>
     <a href="#booking" class="hero-cta">🗓️ همین حالا رزرو کنید</a>
   </div>
   <div class="hero-visual">
@@ -130,7 +124,7 @@
     <div class="trust-item"><div class="num">+۵۰۰</div><div class="lbl">مشتری راضی</div></div>
     <div class="trust-item"><div class="num">۱۰</div><div class="lbl">سال تجربه</div></div>
     <div class="trust-item"><div class="num">۱۰۰٪</div><div class="lbl">تضمین رضایت</div></div>
-    <div class="trust-item"><div class="num">🔒</div><div class="lbl">پرداخت امن</div></div>
+    <div class="trust-item"><div class="num">🔒</div><div class="lbl">محیط امن و خصوصی</div></div>
   </div>
 </section>
 
@@ -146,7 +140,7 @@
 
 <section id="booking">
   <h2 class="section-title">رزرو نوبت</h2>
-  <p class="section-sub">فرم زیر را پر کنید و ۲۰٪ بیعانه بپردازید</p>
+  <p class="section-sub">فرم زیر را پر کنید، جهت هماهنگی با شما تماس می‌گیریم</p>
   <div class="booking-wrap">
     <form id="bookingForm" novalidate>
       <label for="massageType">نوع ماساژ</label>
@@ -181,10 +175,9 @@
 
       <div class="price-box">
         <div>مبلغ کل: <span class="total" id="totalPrice">۰</span> تومان</div>
-        <div class="deposit">بیعانه (۲۰٪): <span id="depositPrice">۰</span> تومان</div>
       </div>
 
-      <button type="submit" class="btn-submit" id="payBtn">🔒 پرداخت بیعانه و رزرو</button>
+      <button type="submit" class="btn-submit" id="payBtn">📝 ثبت درخواست رزرو</button>
       <div class="status-msg" id="statusMsg"></div>
     </form>
   </div>
@@ -201,7 +194,6 @@
   'use strict';
 
   const PRICES = { swedish: 1000000, relax: 900000 };
-  const DEPOSIT_RATE = 0.20;
 
   const $ = id => document.getElementById(id);
   const timeSelect = $('time');
@@ -210,9 +202,7 @@
   const form = $('bookingForm');
   const payBtn = $('payBtn');
   const statusMsg = $('statusMsg');
-  const banner = $('paymentBanner');
 
-  // ===== پر کردن ساعت‌ها =====
   for (let h = 10; h <= 22; h++) {
     const o = document.createElement('option');
     const v = String(h).padStart(2, '0') + ':00';
@@ -220,37 +210,32 @@
     timeSelect.appendChild(o);
   }
 
-  // ===== نرمال‌سازی ارقام فارسی به انگلیسی =====
   function toEnDigits(s) {
     const map = { '۰':'0','۱':'1','۲':'2','۳':'3','۴':'4','۵':'5','۶':'6','۷':'7','۸':'8','۹':'9',
                   '٠':'0','١':'1','٢':'2','٣':'3','٤':'4','٥':'5','٦':'6','٧':'7','٨':'8','٩':'9' };
     return String(s || '').split('').map(c => map[c] || c).join('');
   }
 
-  // ===== محاسبه قیمت =====
   function calcPrice() {
     const t = $('massageType').value;
     const d = parseInt($('duration').value, 10) || 1;
     const total = (PRICES[t] || 0) * d;
-    const dep = Math.round(total * DEPOSIT_RATE);
     $('totalPrice').textContent = total.toLocaleString('fa-IR');
-    $('depositPrice').textContent = dep.toLocaleString('fa-IR');
-    return { total, dep };
+    return { total };
   }
 
   $('massageType').addEventListener('change', calcPrice);
   $('duration').addEventListener('change', calcPrice);
   calcPrice();
 
-  // ===== حداقل تاریخ امروز =====
   const today = new Date().toISOString().split('T')[0];
   dateInput.min = today;
   dateInput.value = today;
 
-  // ===== اعتبارسنجی شماره تلفن (بلادرنگ) =====
   function normalizePhone(v) {
     return toEnDigits(v).replace(/\D/g, '');
   }
+  
   phoneInput.addEventListener('blur', () => {
     const p = normalizePhone(phoneInput.value);
     if (p && !/^09\d{9}$/.test(p)) {
@@ -260,28 +245,6 @@
     }
   });
 
-  // ===== نمایش بنر نتیجه پرداخت =====
-  function showBanner(text, type) {
-    banner.textContent = text;
-    banner.className = type;
-    banner.style.display = 'block';
-    setTimeout(() => { banner.style.display = 'none'; }, 8000);
-  }
-
-  const params = new URLSearchParams(location.search);
-  const paymentResult = params.get('payment');
-  if (paymentResult === 'success') {
-    showBanner('✅ پرداخت با موفقیت انجام شد. رزرو شما ثبت شد.', 'success');
-    history.replaceState({}, '', location.pathname + '#booking');
-  } else if (paymentResult === 'failed') {
-    showBanner('❌ پرداخت ناموفق بود یا لغو شد. لطفاً دوباره تلاش کنید.', 'error');
-    history.replaceState({}, '', location.pathname + '#booking');
-  } else if (paymentResult === 'error') {
-    showBanner('⚠️ خطا در تأیید پرداخت. لطفاً با پشتیبانی تماس بگیرید.', 'error');
-    history.replaceState({}, '', location.pathname + '#booking');
-  }
-
-  // ===== ارسال فرم =====
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
     statusMsg.textContent = '';
@@ -294,29 +257,26 @@
     const name = $('name').value.trim();
     const phone = normalizePhone(phoneInput.value);
 
-    // اعتبارسنجی سمت کلاینت
     if (!date) return showError('لطفاً تاریخ را انتخاب کنید.');
     if (!time) return showError('لطفاً ساعت را انتخاب کنید.');
     if (name.length < 3) return showError('نام باید حداقل ۳ حرف باشد.');
     if (!/^09\d{9}$/.test(phone)) return showError('شماره موبایل نامعتبر است (مثال: ۰۹۱۲۳۴۵۶۷۸۹).');
 
-    // بررسی ساعت کاری در سمت کلاینت (بررسی نهایی در سرور)
     const startHour = parseInt(time.split(':')[0], 10);
     if (startHour < 10 || startHour + duration > 22) {
       return showError('این بازه زمانی خارج از ساعات کاری است.');
     }
 
     payBtn.disabled = true;
-    payBtn.textContent = 'در حال اتصال به درگاه...';
+    payBtn.textContent = 'در حال ثبت...';
 
     try {
-      const res = await fetch('/api/create-payment', {
+      const res = await fetch('/api/create-booking', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ type, duration, date, time, name, phone })
       });
 
-      // اگر پاسخ JSON نبود (مثلاً HTML خطای Cloudflare)
       const ct = res.headers.get('content-type') || '';
       if (!ct.includes('application/json')) {
         throw new Error('پاسخ نامعتبر از سرور');
@@ -325,18 +285,21 @@
       const result = await res.json();
 
       if (!res.ok) {
-        throw new Error(result.message || 'خطا در ایجاد پرداخت');
-      }
-      if (!result.paymentUrl) {
-        throw new Error('لینک پرداخت دریافت نشد');
+        throw new Error(result.message || 'خطا در ثبت رزرو');
       }
 
-      // هدایت به درگاه
-      window.location.href = result.paymentUrl;
+      // نمایش موفقیت
+      statusMsg.innerHTML = '✅ درخواست شما با موفقیت ثبت شد.<br>همکاران ما برای تایید نهایی با شما تماس خواهند گرفت.';
+      statusMsg.className = 'status-msg success';
+      form.reset();
+      dateInput.value = today;
+      calcPrice();
+      
     } catch (err) {
       showError(err.message || 'خطای شبکه. لطفاً دوباره تلاش کنید.');
+    } finally {
       payBtn.disabled = false;
-      payBtn.textContent = '🔒 پرداخت بیعانه و رزرو';
+      payBtn.textContent = '📝 ثبت درخواست رزرو';
     }
   });
 
@@ -344,7 +307,7 @@
     statusMsg.textContent = msg;
     statusMsg.className = 'status-msg error';
     payBtn.disabled = false;
-    payBtn.textContent = '🔒 پرداخت بیعانه و رزرو';
+    payBtn.textContent = '📝 ثبت درخواست رزرو';
   }
 })();
 </script>
