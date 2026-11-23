@@ -3,247 +3,245 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="robots" content="noindex, nofollow, noarchive">
 <title>پنل مدیریت - رزروها</title>
 <link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@300;400;600;700;900&display=swap" rel="stylesheet">
 <style>
-  :root {
-    --gold:#e2b04a; --gold-dark:#c9982e; --bg:#0f0f1a; --bg2:#1a1a2e;
-    --card:rgba(255,255,255,0.04); --border:rgba(226,176,74,0.2);
-    --text:#ececec; --muted:#9a9aad; --green:#4caf50; --red:#ff5252;
-  }
+  :root{--gold:#e2b04a;--gold-dark:#c9982e;--bg:#0f0f1a;--bg2:#1a1a2e;--card:rgba(255,255,255,0.04);--border:rgba(226,176,74,0.2);--text:#ececec;--muted:#9a9aad;--green:#4caf50;--red:#ff5252}
   *{margin:0;padding:0;box-sizing:border-box;font-family:'Vazirmatn',Tahoma,sans-serif}
   body{background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
   body::before{content:'';position:fixed;inset:0;background:radial-gradient(circle at 20% 30%,rgba(226,176,74,0.1),transparent 50%);z-index:-1}
-
   .login-wrap{max-width:420px;margin:12vh auto;background:linear-gradient(160deg,rgba(226,176,74,0.08),rgba(255,255,255,0.02));border:1px solid var(--border);border-radius:24px;padding:40px;box-shadow:0 20px 60px rgba(0,0,0,0.5)}
   .login-wrap h1{text-align:center;color:var(--gold);margin-bottom:8px;font-size:1.5rem}
   .login-wrap p{text-align:center;color:var(--muted);font-size:.9rem;margin-bottom:28px}
-  input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.35);color:#fff;font-size:1rem;margin-bottom:18px;outline:none;font-family:inherit}
+  input{width:100%;padding:14px 16px;border-radius:12px;border:1px solid rgba(255,255,255,0.12);background:rgba(0,0,0,0.35);color:#fff;font-size:1rem;margin-bottom:18px;outline:none;font-family:inherit;transition:.3s}
   input:focus{border-color:var(--gold)}
   .btn{width:100%;padding:14px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--gold),var(--gold-dark));color:#0f0f1a;font-size:1rem;font-weight:800;cursor:pointer;font-family:inherit;transition:.3s}
   .btn:hover{transform:translateY(-2px)}
   .btn:disabled{opacity:.6;cursor:not-allowed;transform:none}
-  .err{color:var(--red);text-align:center;font-size:.85rem;min-height:20px;margin-top:10px}
-
-  /* پنل */
+  .err{color:var(--red);text-align:center;font-size:.85rem;min-height:20px;margin-top:10px;line-height:1.6}
   #panel{display:none;max-width:1100px;margin:0 auto}
   .topbar{display:flex;justify-content:space-between;align-items:center;margin-bottom:28px;flex-wrap:wrap;gap:12px}
   .topbar h1{font-size:1.5rem;color:var(--gold)}
-  .topbar .actions{display:flex;gap:10px}
+  .topbar .actions{display:flex;gap:10px;flex-wrap:wrap}
   .topbar button{padding:10px 18px;border-radius:10px;border:1px solid var(--border);background:var(--card);color:var(--text);cursor:pointer;font-family:inherit;font-size:.9rem;transition:.3s}
   .topbar button:hover{border-color:var(--gold);color:var(--gold)}
   .topbar .logout:hover{border-color:var(--red);color:var(--red)}
-
   .stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:14px;margin-bottom:28px}
   .stat{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:18px;text-align:center}
   .stat .num{font-size:1.8rem;font-weight:900;color:var(--gold)}
-  .stat .lbl{color:var(--muted);font-size:.8rem}
-
+  .stat .lbl{color:var(--muted);font-size:.8rem;margin-top:4px}
   .filters{display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap}
-  .filters input,.filters select{width:auto;margin:0;padding:10px 14px;font-size:.9rem;flex:1;min-width:140px}
-
+  .filters input,.filters select{width:auto;margin:0;padding:10px 14px;font-size:.9rem;flex:1;min-width:140px;background:rgba(0,0,0,0.35);border:1px solid rgba(255,255,255,0.12);color:#fff;border-radius:10px;font-family:inherit;outline:none}
+  .filters input:focus,.filters select:focus{border-color:var(--gold)}
+  .filters select option{background:var(--bg2)}
   .booking-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;margin-bottom:14px;transition:.3s}
   .booking-card:hover{border-color:var(--gold)}
   .bc-head{display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:10px;margin-bottom:14px}
   .bc-name{font-weight:800;font-size:1.05rem;color:var(--gold)}
-  .bc-phone{color:var(--muted);font-size:.85rem;direction:ltr;display:inline-block}
+  .bc-phone{color:var(--muted);font-size:.85rem;direction:ltr;display:inline-block;margin-top:4px}
   .badge{padding:4px 12px;border-radius:50px;font-size:.75rem;font-weight:700}
   .badge.pending{background:rgba(255,152,0,0.15);color:#ff9800}
-  .badge.paid{background:rgba(76,175,80,0.15);color:var(--green)}
+  .badge.confirmed{background:rgba(76,175,80,0.15);color:var(--green)}
   .badge.cancelled{background:rgba(255,82,82,0.15);color:var(--red)}
   .bc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;font-size:.88rem}
   .bc-grid div{color:var(--muted)}
-  .bc-grid strong{color:var(--text);display:block;margin-top:2px}
+  .bc-grid strong{color:var(--text);display:block;margin-top:2px;font-weight:600}
   .bc-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
   .bc-actions button{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:.8rem;font-family:inherit;transition:.2s}
   .bc-actions .ok:hover{border-color:var(--green);color:var(--green)}
   .bc-actions .no:hover{border-color:var(--red);color:var(--red)}
   .empty{text-align:center;color:var(--muted);padding:60px 20px}
-
-  @media(max-width:600px){
-    .login-wrap{margin-top:6vh;padding:28px 22px}
-    .bc-grid{grid-template-columns:1fr 1fr}
-  }
+  .loading{text-align:center;color:var(--muted);padding:40px}
+  @media(max-width:600px){.login-wrap{margin-top:6vh;padding:28px 22px}.bc-grid{grid-template-columns:1fr 1fr}}
 </style>
 </head>
 <body>
 
-<!-- صفحه ورود -->
 <div class="login-wrap" id="loginWrap">
   <h1>🔐 ورود مدیریت</h1>
   <p>این بخش فقط برای مدیر سالن است</p>
   <input type="password" id="password" placeholder="رمز عبور" autocomplete="current-password">
-  <button class="btn" id="loginBtn" onclick="doLogin()">ورود</button>
+  <button class="btn" id="loginBtn">ورود</button>
   <div class="err" id="loginErr"></div>
 </div>
 
-<!-- پنل -->
 <div id="panel">
   <div class="topbar">
     <h1>📋 مدیریت رزروها</h1>
     <div class="actions">
-      <button onclick="loadBookings()">🔄 بروزرسانی</button>
-      <button class="logout" onclick="logout()">خروج</button>
+      <button id="refreshBtn">🔄 بروزرسانی</button>
+      <button class="logout" id="logoutBtn">خروج</button>
     </div>
   </div>
-
   <div class="stats" id="stats"></div>
-
   <div class="filters">
-    <select id="filterStatus" onchange="renderBookings()">
+    <select id="filterStatus">
       <option value="all">همه وضعیت‌ها</option>
-      <option value="pending">در انتظار پرداخت</option>
-      <option value="paid">پرداخت‌شده</option>
+      <option value="pending">در انتظار تایید</option>
+      <option value="confirmed">تایید‌شده</option>
       <option value="cancelled">لغو‌شده</option>
     </select>
-    <input type="text" id="searchBox" placeholder="🔍 جستجو نام یا شماره..." oninput="renderBookings()">
+    <input type="text" id="searchBox" placeholder="🔍 جستجو نام یا شماره...">
   </div>
-
   <div id="bookingsList"></div>
 </div>
 
 <script>
-// ===== احراز هویت =====
-// ⚠️ این فقط لایه نمایشی است. احراز هویت واقعی در Worker انجام می‌شود.
-// توکن بعد از ورود موفق در sessionStorage ذخیره می‌شود و با هر درخواست ارسال می‌گردد.
-let AUTH_TOKEN = sessionStorage.getItem('adminToken') || '';
+(function(){
+  'use strict';
 
-document.getElementById('password').addEventListener('keydown', e => {
-  if (e.key === 'Enter') doLogin();
-});
+  let AUTH_TOKEN = sessionStorage.getItem('adminToken') || '';
+  let allBookings = [];
+  const $ = id => document.getElementById(id);
 
-async function doLogin() {
-  const pass = document.getElementById('password').value;
-  const errEl = document.getElementById('loginErr');
-  const btn = document.getElementById('loginBtn');
-  errEl.textContent = '';
-  btn.disabled = true;
-  btn.textContent = 'در حال بررسی...';
+  $('password').addEventListener('keydown', e => { if (e.key === 'Enter') doLogin(); });
+  $('loginBtn').addEventListener('click', doLogin);
 
-  try {
-    const res = await fetch('/api/admin/login', {
-      method:'POST',
-      headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({ password: pass })
-    });
-    if (!res.ok) throw new Error('رمز عبور اشتباه است');
-    const data = await res.json();
-    AUTH_TOKEN = data.token;
-    sessionStorage.setItem('adminToken', AUTH_TOKEN);
-    showPanel();
-  } catch (e) {
-    errEl.textContent = e.message;
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'ورود';
-  }
-}
+  async function doLogin() {
+    const pass = $('password').value;
+    const errEl = $('loginErr');
+    const btn = $('loginBtn');
+    errEl.textContent = '';
+    if (!pass) { errEl.textContent = 'رمز عبور را وارد کنید'; return; }
+    btn.disabled = true; btn.textContent = 'در حال بررسی...';
 
-function logout() {
-  sessionStorage.removeItem('adminToken');
-  AUTH_TOKEN = '';
-  location.reload();
-}
-
-function showPanel() {
-  document.getElementById('loginWrap').style.display = 'none';
-  document.getElementById('panel').style.display = 'block';
-  loadBookings();
-}
-
-// اگر از قبل لاگین بود
-if (AUTH_TOKEN) showPanel();
-
-// ===== دریافت رزروها =====
-let allBookings = [];
-
-async function loadBookings() {
-  try {
-    const res = await fetch('/api/admin/bookings', {
-      headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
-    });
-    if (res.status === 401) { logout(); return; }
-    if (!res.ok) throw new Error('خطا در دریافت اطلاعات');
-    const data = await res.json();
-    allBookings = data.bookings || [];
-    renderStats();
-    renderBookings();
-  } catch (e) {
-    document.getElementById('bookingsList').innerHTML = `<div class="empty">⚠️ ${e.message}</div>`;
-  }
-}
-
-function renderStats() {
-  const total = allBookings.length;
-  const paid = allBookings.filter(b => b.status === 'paid').length;
-  const pending = allBookings.filter(b => b.status === 'pending').length;
-  const revenue = allBookings.filter(b => b.status === 'paid').reduce((s,b)=>s+b.deposit_amount, 0);
-  document.getElementById('stats').innerHTML = `
-    <div class="stat"><div class="num">${total.toLocaleString('fa-IR')}</div><div class="lbl">کل رزروها</div></div>
-    <div class="stat"><div class="num">${paid.toLocaleString('fa-IR')}</div><div class="lbl">پرداخت‌شده</div></div>
-    <div class="stat"><div class="num">${pending.toLocaleString('fa-IR')}</div><div class="lbl">در انتظار</div></div>
-    <div class="stat"><div class="num">${revenue.toLocaleString('fa-IR')}</div><div class="lbl">درآمد بیعانه (تومان)</div></div>
-  `;
-}
-
-function renderBookings() {
-  const status = document.getElementById('filterStatus').value;
-  const search = document.getElementById('searchBox').value.trim().toLowerCase();
-
-  let list = allBookings;
-  if (status !== 'all') list = list.filter(b => b.status === status);
-  if (search) list = list.filter(b =>
-    b.name.toLowerCase().includes(search) || b.phone.includes(search)
-  );
-
-  const el = document.getElementById('bookingsList');
-  if (!list.length) {
-    el.innerHTML = '<div class="empty">📭 رزروی یافت نشد</div>';
-    return;
+    try {
+      const res = await fetch('/api/admin/login', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ password: pass })
+      });
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) throw new Error('پاسخ نامعتبر از سرور');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'رمز عبور اشتباه است');
+      AUTH_TOKEN = data.token;
+      sessionStorage.setItem('adminToken', AUTH_TOKEN);
+      $('password').value = '';
+      showPanel();
+    } catch (e) {
+      errEl.textContent = e.message;
+    } finally {
+      btn.disabled = false; btn.textContent = 'ورود';
+    }
   }
 
-  const typeLabels = { swedish:'سوئدی', relax:'رلکسی' };
-  const statusLabels = { pending:'در انتظار', paid:'پرداخت‌شده', cancelled:'لغو‌شده' };
+  $('logoutBtn').addEventListener('click', logout);
+  function logout() { sessionStorage.removeItem('adminToken'); AUTH_TOKEN = ''; location.reload(); }
 
-  el.innerHTML = list.map(b => `
-    <div class="booking-card">
-      <div class="bc-head">
-        <div>
-          <div class="bc-name">${b.name}</div>
-          <div class="bc-phone">${b.phone}</div>
-        </div>
-        <span class="badge ${b.status}">${statusLabels[b.status] || b.status}</span>
-      </div>
-      <div class="bc-grid">
-        <div>نوع ماساژ<strong>${typeLabels[b.massage_type] || b.massage_type}</strong></div>
-        <div>مدت<strong>${b.duration} ساعت</strong></div>
-        <div>تاریخ<strong>${b.booking_date}</strong></div>
-        <div>ساعت<strong>${b.booking_time}</strong></div>
-        <div>مبلغ کل<strong>${b.total_amount.toLocaleString('fa-IR')} ت</strong></div>
-        <div>بیعانه<strong>${b.deposit_amount.toLocaleString('fa-IR')} ت</strong></div>
-        <div>تاریخ ثبت<strong>${new Date(b.created_at).toLocaleString('fa-IR')}</strong></div>
-      </div>
-      ${b.status === 'pending' ? `
-      <div class="bc-actions">
-        <button class="ok" onclick="setStatus(${b.id},'paid')">✅ تایید پرداخت</button>
-        <button class="no" onclick="setStatus(${b.id},'cancelled')">❌ لغو</button>
-      </div>` : ''}
-    </div>
-  `).join('');
-}
-
-async function setStatus(id, status) {
-  if (!confirm('مطمئنید؟')) return;
-  try {
-    const res = await fetch(`/api/admin/bookings/${id}`, {
-      method:'PATCH',
-      headers:{'Content-Type':'application/json','Authorization':'Bearer '+AUTH_TOKEN},
-      body: JSON.stringify({ status })
-    });
-    if (!res.ok) throw new Error('خطا');
+  function showPanel() {
+    $('loginWrap').style.display = 'none';
+    $('panel').style.display = 'block';
     loadBookings();
-  } catch (e) { alert(e.message); }
-}
+  }
+  if (AUTH_TOKEN) showPanel();
+
+  $('refreshBtn').addEventListener('click', loadBookings);
+  $('filterStatus').addEventListener('change', renderBookings);
+  $('searchBox').addEventListener('input', renderBookings);
+
+  async function loadBookings() {
+    $('bookingsList').innerHTML = '<div class="loading">در حال بارگذاری...</div>';
+    try {
+      const res = await fetch('/api/admin/bookings', { headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN } });
+      if (res.status === 401) { logout(); return; }
+      const ct = res.headers.get('content-type') || '';
+      if (!ct.includes('application/json')) throw new Error('پاسخ نامعتبر از سرور');
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.message || 'خطا در دریافت اطلاعات');
+      allBookings = Array.isArray(data.bookings) ? data.bookings : [];
+      renderStats(); renderBookings();
+    } catch (e) {
+      $('bookingsList').innerHTML = `<div class="empty">⚠️ ${escapeHtml(e.message)}</div>`;
+    }
+  }
+
+  function renderStats() {
+    const total = allBookings.length;
+    const confirmed = allBookings.filter(b => b.status === 'confirmed').length;
+    const pending = allBookings.filter(b => b.status === 'pending').length;
+    $('stats').innerHTML = `
+      <div class="stat"><div class="num">${total.toLocaleString('fa-IR')}</div><div class="lbl">کل رزروها</div></div>
+      <div class="stat"><div class="num">${confirmed.toLocaleString('fa-IR')}</div><div class="lbl">تایید‌شده</div></div>
+      <div class="stat"><div class="num">${pending.toLocaleString('fa-IR')}</div><div class="lbl">در انتظار</div></div>
+    `;
+  }
+
+  function renderBookings() {
+    const status = $('filterStatus').value;
+    const search = $('searchBox').value.trim().toLowerCase();
+
+    let list = allBookings;
+    if (status !== 'all') list = list.filter(b => b.status === status);
+    if (search) {
+      list = list.filter(b =>
+        String(b.name || '').toLowerCase().includes(search) || String(b.phone || '').includes(search)
+      );
+    }
+
+    const el = $('bookingsList');
+    if (!list.length) { el.innerHTML = '<div class="empty">📭 رزروی یافت نشد</div>'; return; }
+
+    const typeLabels = { swedish: 'سوئدی', relax: 'رلکسی' };
+    const statusLabels = { pending: 'در انتظار', confirmed: 'تایید‌شده', cancelled: 'لغو‌شده' };
+
+    el.innerHTML = list.map(b => `
+      <div class="booking-card">
+        <div class="bc-head">
+          <div>
+            <div class="bc-name">${escapeHtml(b.name || '-')}</div>
+            <div class="bc-phone">${escapeHtml(b.phone || '-')}</div>
+          </div>
+          <span class="badge ${escapeHtml(b.status || 'pending')}">${statusLabels[b.status] || escapeHtml(b.status || '')}</span>
+        </div>
+        <div class="bc-grid">
+          <div>نوع ماساژ<strong>${typeLabels[b.massage_type] || escapeHtml(b.massage_type || '-')}</strong></div>
+          <div>مدت<strong>${Number(b.duration) || 0} ساعت</strong></div>
+          <div>تاریخ<strong>${escapeHtml(b.booking_date || '-')}</strong></div>
+          <div>ساعت<strong>${escapeHtml(b.booking_time || '-')}</strong></div>
+          <div>مبلغ کل<strong>${Number(b.total_amount || 0).toLocaleString('fa-IR')} ت</strong></div>
+          <div>تاریخ ثبت<strong>${formatDate(b.created_at)}</strong></div>
+        </div>
+        ${b.status === 'pending' ? `
+        <div class="bc-actions">
+          <button class="ok" data-id="${b.id}" data-status="confirmed">✅ تایید نهایی (تماس گرفتم)</button>
+          <button class="no" data-id="${b.id}" data-status="cancelled">❌ لغو</button>
+        </div>` : ''}
+      </div>
+    `).join('');
+
+    el.querySelectorAll('button[data-id]').forEach(btn => {
+      btn.addEventListener('click', () => { setStatus(parseInt(btn.dataset.id, 10), btn.dataset.status); });
+    });
+  }
+
+  async function setStatus(id, status) {
+    if (!confirm('مطمئنید؟')) return;
+    try {
+      const res = await fetch(`/api/admin/bookings/${id}`, {
+        method: 'PATCH', headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + AUTH_TOKEN },
+        body: JSON.stringify({ status })
+      });
+      if (res.status === 401) { logout(); return; }
+      if (!res.ok) throw new Error('خطا در به‌روزرسانی');
+      loadBookings();
+    } catch (e) { alert(e.message); }
+  }
+
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;' }[c]));
+  }
+  function formatDate(s) {
+    if (!s) return '-';
+    try {
+      const str = String(s);
+      const iso = str.includes('T') ? str : str.replace(' ', 'T') + 'Z';
+      const d = new Date(iso);
+      if (isNaN(d.getTime())) return escapeHtml(str);
+      return d.toLocaleString('fa-IR', { dateStyle: 'short', timeStyle: 'short' });
+    } catch { return escapeHtml(String(s)); }
+  }
+})();
 </script>
 </body>
 </html>
