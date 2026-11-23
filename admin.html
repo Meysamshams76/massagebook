@@ -47,10 +47,12 @@
   .bc-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;font-size:.88rem}
   .bc-grid div{color:var(--muted)}
   .bc-grid strong{color:var(--text);display:block;margin-top:2px;font-weight:600}
-  .bc-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap}
+  .bc-actions{margin-top:14px;display:flex;gap:8px;flex-wrap:wrap;align-items: center;}
   .bc-actions button{padding:7px 14px;border-radius:8px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:.8rem;font-family:inherit;transition:.2s}
   .bc-actions .ok:hover{border-color:var(--green);color:var(--green)}
   .bc-actions .no:hover{border-color:var(--red);color:var(--red)}
+  .bc-actions .del { border-color: var(--red); color: var(--red); margin-right: auto; }
+  .bc-actions .del:hover { background: rgba(255,82,82,0.1); }
   .empty{text-align:center;color:var(--muted);padding:60px 20px}
   .loading{text-align:center;color:var(--muted);padding:40px}
   @media(max-width:600px){.login-wrap{margin-top:6vh;padding:28px 22px}.bc-grid{grid-template-columns:1fr 1fr}}
@@ -202,16 +204,26 @@
           <div>مبلغ کل<strong>${Number(b.total_amount || 0).toLocaleString('fa-IR')} ت</strong></div>
           <div>تاریخ ثبت<strong>${formatDate(b.created_at)}</strong></div>
         </div>
-        ${b.status === 'pending' ? `
+        
         <div class="bc-actions">
-          <button class="ok" data-id="${b.id}" data-status="confirmed">✅ تایید نهایی (تماس گرفتم)</button>
-          <button class="no" data-id="${b.id}" data-status="cancelled">❌ لغو</button>
-        </div>` : ''}
+          ${b.status === 'pending' ? `
+            <button class="ok" data-id="${b.id}" data-status="confirmed">✅ تایید نهایی (تماس گرفتم)</button>
+            <button class="no" data-id="${b.id}" data-status="cancelled">❌ لغو</button>
+          ` : ''}
+          <button class="del" data-del-id="${b.id}">🗑️ حذف کامل</button>
+        </div>
+        
       </div>
     `).join('');
 
+    // دکمه های تایید و لغو
     el.querySelectorAll('button[data-id]').forEach(btn => {
       btn.addEventListener('click', () => { setStatus(parseInt(btn.dataset.id, 10), btn.dataset.status); });
+    });
+    
+    // دکمه حذف کامل
+    el.querySelectorAll('button[data-del-id]').forEach(btn => {
+      btn.addEventListener('click', () => { deleteBooking(parseInt(btn.dataset.delId, 10)); });
     });
   }
 
@@ -224,6 +236,18 @@
       });
       if (res.status === 401) { logout(); return; }
       if (!res.ok) throw new Error('خطا در به‌روزرسانی');
+      loadBookings();
+    } catch (e) { alert(e.message); }
+  }
+  
+  async function deleteBooking(id) {
+    if (!confirm('آیا از حذف کامل این رزرو مطمئن هستید؟ این عمل غیرقابل بازگشت است.')) return;
+    try {
+      const res = await fetch(`/api/admin/bookings/${id}`, {
+        method: 'DELETE', headers: { 'Authorization': 'Bearer ' + AUTH_TOKEN }
+      });
+      if (res.status === 401) { logout(); return; }
+      if (!res.ok) throw new Error('خطا در حذف رزرو');
       loadBookings();
     } catch (e) { alert(e.message); }
   }
